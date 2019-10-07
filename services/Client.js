@@ -15,6 +15,7 @@ const heartBeatSpeed = HEART_BEAT_SPEED || seconds(1);
 class Client {
   constructor() {
     this.myResource = 0;
+    this.token = null;
   }
 
   connect() {
@@ -27,10 +28,9 @@ class Client {
     this.ws.on('close', this.cleanUp);
   }
 
-  heartBeat(token) {
-    debug(this.ws.call);
-    this.ws.call('heartBeat', { token });
-    setTimeout(this.heartBeat.bind(this), heartBeatSpeed, token);
+  heartBeat() {
+    this.ws.call('heartBeat', { token: this.token });
+    setTimeout(this.heartBeat.bind(this), heartBeatSpeed);
   }
 
   main() {
@@ -38,7 +38,7 @@ class Client {
       .then((status) => {
         debug(status ? 'Successfully logged in' : 'Authentication failure');
         this.ws.call('getToken').then((myToken) => {
-          debug('myToken: ', myToken);
+          this.token = myToken;
           this.heartBeat(myToken);
         });
       }).catch((err) => { debug(err); });
@@ -50,6 +50,18 @@ class Client {
     }).catch((e) => {
       debug(e);
     });
+  }
+
+  giveResource(quantity) {
+    if (this.resource >= quantity) {
+      this.ws.call('giveResource', quantity).then((result) => {
+        debug(result);
+      }).catch((e) => {
+        debug(e);
+      });
+    } else {
+      debug(`[${this.token}] Not enough resources.`);
+    }
   }
 }
 
