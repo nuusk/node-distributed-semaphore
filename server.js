@@ -25,7 +25,7 @@ debug(`Server started on ${host}:${port}`);
 
 const clients = [];
 
-server.register('heartBeat', () => { debug('heartBeated...'); debug(clients); });
+server.register('heartBeat', (token) => { debug('heartBeated...', token); debug(clients); });
 server.register('takeResource', (quantity) => semaphore.p(quantity));
 server.register('giveResource', (quantity) => semaphore.v(quantity));
 server.register('getToken', () => {

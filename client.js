@@ -14,18 +14,18 @@ const heartBeatSpeed = HEART_BEAT_SPEED || seconds(5);
 
 const ws = new WebSocket(`ws://${host}:${port}`);
 
-const heartBeat = () => {
-  ws.notify('heartBeat');
-
-  setTimeout(heartBeat, heartBeatSpeed);
+const heartBeat = (token) => {
+  ws.call('heartBeat', { token });
+  setTimeout(heartBeat, heartBeatSpeed, token);
 };
 
 const main = () => {
   ws.login({ username: 'poe', password: 'poe' })
     .then((status) => {
       debug(status ? 'Successfully logged in' : 'Authentication failure');
-      ws.call('getToken').then((token) => {
-        debug(token);
+      ws.call('getToken').then((myToken) => {
+        debug('myToken: ', myToken);
+        heartBeat(myToken);
       });
     }).catch((err) => { debug(err); });
 
@@ -34,8 +34,6 @@ const main = () => {
   // }).catch((e) => {
   //   debug(e);
   // });
-
-  heartBeat();
 };
 
 const cleanUp = () => {
