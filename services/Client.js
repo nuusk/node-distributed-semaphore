@@ -44,28 +44,28 @@ class Client {
   }
 
   cleanUp() {
-    this.ws.call('giveResource', this.resources).then((result) => {
+    this.ws.call('giveResources', this.resources).then((result) => {
       debug(result);
     }).catch((e) => {
       debug(e);
     });
   }
 
-  giveResource(quantity) {
+  giveResources(quantity) {
     if (this.resource >= quantity) {
-      this.ws.call('giveResource', quantity).then((result) => {
+      this.ws.call('giveResources', quantity).then((result) => {
         debug(result);
       }).catch((e) => {
         debug(e);
       });
     } else {
-      debug(`[${this.token}] Not enough resources.`);
+      debug(`\n[${this.token}] Not enough resources.`);
     }
   }
 
-  takeResource(quantity) {
-    this.ws.call('takeResource', quantity).then((resources) => {
-      debug(`[${this.token}] I got ${resources} resources.`);
+  takeResources(quantity) {
+    this.ws.call('takeResources', quantity).then((resources) => {
+      debug(`\n[${this.token}] I got ${resources} resources.`);
       this.resources += resources;
     }).catch((e) => {
       debug(e);
@@ -74,7 +74,8 @@ class Client {
 
   checkResources() {
     this.ws.call('checkResources').then((resources) => {
-      debug(`[${this.token}] The server has ${resources} resources left.`);
+      debug(`\n[${this.token}] The server has ${resources} resources left.`);
+      debug(`[${this.token}] I have ${this.resources} resources left.`);
     }).catch((e) => {
       debug(e);
     });
