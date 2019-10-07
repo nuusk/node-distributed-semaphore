@@ -1,6 +1,7 @@
 require('dotenv').config();
 const WebSocketServer = require('rpc-websockets').Server;
 const debug = require('debug')('server');
+const uuidv4 = require('uuid/v4');
 const Semaphore = require('./services/Semaphore');
 const Authentication = require('./services/Authentication');
 
@@ -22,9 +23,16 @@ const semaphore = new Semaphore(semaphoreCapacity);
 const server = new WebSocketServer({ port, host });
 debug(`Server started on ${host}:${port}`);
 
-server.register('heartBeat', () => { debug('heartBeated...'); });
+const clients = [];
+
+server.register('heartBeat', () => { debug('heartBeated...'); debug(clients); });
 server.register('takeResource', (quantity) => semaphore.p(quantity));
 server.register('giveResource', (quantity) => semaphore.v(quantity));
+server.register('getToken', () => {
+  const newUser = uuidv4();
+  clients.push(newUser);
+  return newUser;
+});
 // server.register('account', () => ['confi1', 'confi2']).protected();
 server.setAuth((user) => {
   const { username, password } = user;

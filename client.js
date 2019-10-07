@@ -22,10 +22,12 @@ const heartBeat = () => {
 
 const main = () => {
   ws.login({ username: 'poe', password: 'poe' })
-    .then((message) => {
-      debug(message);
-    }).catch((e) => { debug(e); });
-
+    .then((status) => {
+      debug(status ? 'Successfully logged in' : 'Authentication failure');
+      ws.call('getToken').then((token) => {
+        debug(token);
+      });
+    }).catch((err) => { debug(err); });
 
   // ws.call('takeResource', 2).then((result) => {
   //   debug(result);
