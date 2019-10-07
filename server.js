@@ -7,16 +7,16 @@ const { DEBUG_ENABLED, SEMAPHORE_CAPACITY } = process.env;
 
 debug.enabled = DEBUG_ENABLED;
 
+const semaphoreCapacity = SEMAPHORE_CAPACITY || 20;
+
+debug('Attempting to create a semaphore.');
+const semaphore = new Semaphore(semaphoreCapacity).then((message) => {
+  debug(message);
+});
+
 const server = new WebSocketServer({
   port: 8080,
   host: 'localhost',
-});
-
-const semaphoreCapacity = SEMAPHORE_CAPACITY || 20;
-
-debug('Attempting to create a semaphore');
-const semaphore = new Semaphore(semaphoreCapacity).then((message) => {
-  debug(message);
 });
 
 // register an RPC method
