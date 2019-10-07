@@ -1,3 +1,8 @@
-export const ONE_SECOND = 1000;
+const ONE_SECOND = 1000;
 
-export const seconds = (numberOfSeconds) => numberOfSeconds * ONE_SECOND;
+const seconds = (numberOfSeconds) => numberOfSeconds * ONE_SECOND;
+
+module.exports = {
+  ONE_SECOND,
+  seconds,
+};
