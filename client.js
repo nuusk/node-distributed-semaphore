@@ -21,11 +21,17 @@ const heartBeat = () => {
 };
 
 const main = () => {
-  ws.call('takeResource', 2).then((result) => {
-    debug(result);
-  }).catch((e) => {
-    debug(e);
-  });
+  ws.login({ username: 'poe', password: 'poe' })
+    .then((message) => {
+      debug(message);
+    }).catch((e) => { debug(e); });
+
+
+  // ws.call('takeResource', 2).then((result) => {
+  //   debug(result);
+  // }).catch((e) => {
+  //   debug(e);
+  // });
 
   heartBeat();
 };
