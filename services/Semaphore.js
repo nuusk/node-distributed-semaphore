@@ -11,7 +11,7 @@ class Semaphore {
   constructor(s) {
     this.s = s;
     this.capacity = s;
-    this.intervalSpeed = seconds(1);
+    this.intervalSpeed = seconds(3);
   }
 
   v(value) {
@@ -25,10 +25,10 @@ class Semaphore {
     const operationId = uuidv4();
     debug(`Operation [${operationId}] started.`);
     return new Promise((resolve) => {
-      let i = 0;
+      let tryNumber = 0;
       const interval = setInterval(() => {
-        debug(`s: ${this.s}, try: ${i}`);
-        i += 1;
+        debug(`[${operationId}] s: ${this.s}, try: ${tryNumber}`);
+        tryNumber += 1;
         if (this.s >= value) {
           clearInterval(interval);
           debug(`Operation [${operationId}] finished.`);
