@@ -3,18 +3,21 @@ const WebSocket = require('rpc-websockets').Client;
 const debug = require('debug')('client');
 const { seconds } = require('./helpers/time');
 
-const { DEBUG_ENABLED, PORT, HOST } = process.env;
+const {
+  DEBUG_ENABLED, PORT, HOST, HEART_BEAT_SPEED,
+} = process.env;
 
 debug.enabled = DEBUG_ENABLED;
 const port = PORT || 8080;
 const host = HOST || 'localhost';
+const heartBeatSpeed = HEART_BEAT_SPEED || seconds(5);
 
 const ws = new WebSocket(`ws://${host}:${port}`);
 
 const heartBeat = () => {
   ws.notify('heartBeat');
 
-  setTimeout(heartBeat, seconds(1));
+  setTimeout(heartBeat, heartBeatSpeed);
 };
 
 const main = () => {
