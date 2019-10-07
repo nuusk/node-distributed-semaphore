@@ -1,6 +1,11 @@
+require('dotenv').config();
 const WebSocket = require('rpc-websockets').Client;
 const assert = require('assert');
 const debug = require('debug')('client');
+
+const { DEBUG_ENABLED } = process.env;
+
+debug.enabled = DEBUG_ENABLED;
 
 // instantiate Client and connect to an RPC server
 const ws = new WebSocket('ws://localhost:8080');

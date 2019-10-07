@@ -1,5 +1,10 @@
+require('dotenv').config();
 const WebSocketServer = require('rpc-websockets').Server;
 const debug = require('debug')('server');
+
+const { DEBUG_ENABLED } = process.env;
+
+debug.enabled = DEBUG_ENABLED;
 
 const server = new WebSocketServer({
   port: 8080,

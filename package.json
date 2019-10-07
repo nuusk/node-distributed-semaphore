@@ -10,6 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "debug": "^4.1.1",
+    "dotenv": "^8.1.0",
     "rpc-websockets": "^4.6.1"
   },
   "devDependencies": {
