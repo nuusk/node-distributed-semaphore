@@ -1,5 +1,6 @@
 require('dotenv').config();
 const debug = require('debug')('services/semaphore');
+const uuidv4 = require('uuid/v4');
 const { seconds } = require('../helpers/time');
 
 const { DEBUG_ENABLED } = process.env;
@@ -21,6 +22,8 @@ class Semaphore {
   }
 
   p(value) {
+    const operationId = uuidv4();
+    debug(`Operation [${operationId}] started.`);
     return new Promise((resolve) => {
       let i = 0;
       const interval = setInterval(() => {
@@ -28,7 +31,7 @@ class Semaphore {
         i += 1;
         if (this.s >= value) {
           clearInterval(interval);
-          debug('Cleared.');
+          debug(`Operation [${operationId}] finished.`);
           this.s -= 1;
           resolve();
         }
