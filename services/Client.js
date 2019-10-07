@@ -71,6 +71,14 @@ class Client {
       debug(e);
     });
   }
+
+  checkResources() {
+    this.ws.call('checkResources').then((resources) => {
+      debug(`[${this.token}] The server has ${resources} resources left.`);
+    }).catch((e) => {
+      debug(e);
+    });
+  }
 }
 
 module.exports = Client;

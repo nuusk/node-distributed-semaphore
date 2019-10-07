@@ -40,6 +40,7 @@ class Server {
     });
     this.ws.register('takeResource', (quantity) => this.semaphore.p(quantity));
     this.ws.register('giveResource', (quantity) => this.semaphore.v(quantity));
+    this.ws.register('checkResources', () => this.semaphore.s);
     this.ws.register('getToken', () => {
       const newUser = uuidv4();
       this.clients.push(newUser);
