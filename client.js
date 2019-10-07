@@ -1,42 +1,23 @@
 require('dotenv').config();
 const WebSocket = require('rpc-websockets').Client;
-const assert = require('assert');
 const debug = require('debug')('client');
 
-const { DEBUG_ENABLED } = process.env;
+const { DEBUG_ENABLED, PORT, HOST } = process.env;
 
 debug.enabled = DEBUG_ENABLED;
+const port = PORT || 8080;
+const host = HOST || 'localhost';
 
-// instantiate Client and connect to an RPC server
-const ws = new WebSocket('ws://localhost:8080');
+const ws = new WebSocket(`ws://${host}:${port}`);
+
+let counter;
 
 ws.on('open', () => {
-  // call an RPC method with parameters
-  ws.call('sum', [5, 3]).then((result) => {
+  ws.call('takeResource', 2).then((result) => {
     debug(result);
-    assert.equal(result, 8);
+  }).catch((e) => {
+    debug(e);
   });
 
-  // send a notification to an RPC server
-  // ws.notify('openedNewsModule');
-
-  // subscribe to receive an event
-  // ws.subscribe('feedUpdated');
-
-  // ws.on('feedUpdated', () => {
-  // updateLogic();
-  // });
-
-  // unsubscribe from an event
-  // ws.unsubscribe('feedUpdated');
-
-  // login your client to be able to use protected methods
-  // ws.login({ username: 'confi1', password: 'foobar' }).then(() => {
-  //   ws.call('account'), then((result) => {
-  //     require('assert').equal(result, ['confi1', 'confi2']);
-  //   });
-  // });
-
-  // close a websocket connection
   // ws.close();
 });

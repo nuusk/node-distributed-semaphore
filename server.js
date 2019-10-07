@@ -14,28 +14,9 @@ const port = PORT || 8080;
 const host = HOST || 'localhost';
 
 debug('Attempting to create a semaphore.');
-const semaphore = new Semaphore(semaphoreCapacity).then((message) => {
-  debug(message);
-});
-
+const semaphore = new Semaphore(semaphoreCapacity);
 
 const server = new WebSocketServer({ port, host });
 debug(`Server started on ${host}:${port}`);
 
-// register an RPC method
-server.register('sum', (params) => params[0] + params[1]);
-
-// ...and maybe a protected one also
-// server.register('account', () => ['confi1', 'confi2']).protected();
-
-// Creates a new event that can be emitted to clients.
-// server.event('feedUpdated');
-
-// get events
-// console.log(server.eventList());
-
-// emit an event to subscribers
-// server.emit('feedUpdated');
-
-// close the server
-// server.close();
+server.register('takeResource', (quantity) => semaphore.p(quantity));

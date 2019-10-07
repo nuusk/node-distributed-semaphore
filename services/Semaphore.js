@@ -9,13 +9,11 @@ debug.enabled = DEBUG_ENABLED;
 
 class Semaphore {
   constructor(s) {
-    return new Promise((resolve) => {
-      this.s = s;
-      this.capacity = s;
-      this.intervalSpeed = seconds(3);
+    this.s = s;
+    this.capacity = s;
+    this.intervalSpeed = seconds(3);
 
-      resolve(`Semaphore with capacity of ${this.capacity} created successfully.`);
-    });
+    debug(`Semaphore with capacity of ${this.capacity} created successfully.`);
   }
 
   v(value) {
@@ -27,19 +25,23 @@ class Semaphore {
 
   p(value) {
     const operationId = uuidv4();
-    debug(`Operation [${operationId}] started.`);
+    debug(`[${operationId}] Operation started.`);
     return new Promise((resolve) => {
       let tryNumber = 0;
-      const interval = setInterval(() => {
+
+      const tryOperation = () => {
         debug(`[${operationId}] s: ${this.s}, try: ${tryNumber}`);
         tryNumber += 1;
         if (this.s >= value) {
-          clearInterval(interval);
-          debug(`Operation [${operationId}] finished.`);
-          this.s -= 1;
-          resolve();
+          debug(`[${operationId}] Operation finished.`);
+          this.s -= value;
+          resolve(value);
+        } else {
+          setTimeout(tryOperation, this.intervalSpeed);
         }
-      }, this.intervalSpeed);
+      };
+
+      tryOperation();
     });
   }
 }
