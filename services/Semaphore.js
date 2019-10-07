@@ -19,7 +19,7 @@ class Semaphore {
   v(value) {
     return new Promise((resolve) => {
       this.s += value;
-      resolve();
+      resolve(value);
     });
   }
 

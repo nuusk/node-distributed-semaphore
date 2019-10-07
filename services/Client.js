@@ -44,7 +44,10 @@ class Client {
   }
 
   cleanUp() {
-    this.ws.call('giveResources', this.resources).then((result) => {
+    this.ws.call('giveResources', {
+      quantity: this.resources,
+      token: this.token,
+    }).then((result) => {
       debug(result);
     }).catch((e) => {
       debug(e);
@@ -52,9 +55,13 @@ class Client {
   }
 
   giveResources(quantity) {
-    if (this.resource >= quantity) {
-      this.ws.call('giveResources', quantity).then((result) => {
-        debug(result);
+    if (this.resources >= quantity) {
+      this.ws.call('giveResources', {
+        quantity,
+        token: this.token,
+      }).then(() => {
+        this.resources -= quantity;
+        debug(`\n[${this.token}] I gave ${quantity} resources.`);
       }).catch((e) => {
         debug(e);
       });
@@ -64,7 +71,10 @@ class Client {
   }
 
   takeResources(quantity) {
-    this.ws.call('takeResources', quantity).then((resources) => {
+    this.ws.call('takeResources', {
+      quantity,
+      token: this.token,
+    }).then((resources) => {
       debug(`\n[${this.token}] I got ${resources} resources.`);
       this.resources += resources;
     }).catch((e) => {

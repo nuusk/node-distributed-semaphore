@@ -17,7 +17,7 @@ const host = HOST || 'localhost';
 
 class Server {
   constructor() {
-    this.clients = [];
+    this.clients = {};
     this.auth = new Authentication();
 
     debug('Attempting to create a semaphore.');
@@ -38,12 +38,22 @@ class Server {
       debug('heartBeated reveived from user ', token);
       debug(this.clients);
     });
-    this.ws.register('takeResources', (quantity) => this.semaphore.p(quantity));
-    this.ws.register('giveResources', (quantity) => this.semaphore.v(quantity));
+    this.ws.register('takeResources', ({ quantity, token }) => new Promise((resolve) => {
+      this.semaphore.p(quantity).then((resources) => {
+        this.clients[token] += resources;
+        resolve(resources);
+      });
+    }));
+    this.ws.register('giveResources', ({ quantity, token }) => new Promise((resolve) => {
+      this.semaphore.v(quantity).then((resources) => {
+        this.clients[token] -= resources;
+        resolve(resources);
+      });
+    }));
     this.ws.register('checkResources', () => this.semaphore.s);
     this.ws.register('getToken', () => {
       const newUser = uuidv4();
-      this.clients.push(newUser);
+      this.clients[newUser] = 0;
       return newUser;
     });
   }
