@@ -14,18 +14,28 @@ const heartBeatSpeed = HEART_BEAT_SPEED || seconds(1);
 
 class Client {
   constructor() {
-    this.myResource = 0;
+    this.resources = 0;
     this.token = null;
   }
 
   connect() {
-    this.ws = new WebSocket(`ws://${host}:${port}`);
-    this.initEvents();
-  }
+    return new Promise((resolve) => {
+      this.ws = new WebSocket(`ws://${host}:${port}`);
 
-  initEvents() {
-    this.ws.on('open', this.main.bind(this));
-    this.ws.on('close', this.cleanUp);
+      this.ws.on('open', () => {
+        this.ws.login({ username: 'poe', password: 'poe' })
+          .then((status) => {
+            debug(status ? 'Successfully logged in' : 'Authentication failure');
+            this.ws.call('getToken').then((myToken) => {
+              this.token = myToken;
+              resolve(this.token);
+              this.heartBeat(myToken);
+            });
+          }).catch((err) => { debug(err); });
+      });
+
+      this.ws.on('close', this.cleanUp.bind(this));
+    });
   }
 
   heartBeat() {
@@ -33,19 +43,8 @@ class Client {
     setTimeout(this.heartBeat.bind(this), heartBeatSpeed);
   }
 
-  main() {
-    this.ws.login({ username: 'poe', password: 'poe' })
-      .then((status) => {
-        debug(status ? 'Successfully logged in' : 'Authentication failure');
-        this.ws.call('getToken').then((myToken) => {
-          this.token = myToken;
-          this.heartBeat(myToken);
-        });
-      }).catch((err) => { debug(err); });
-  }
-
   cleanUp() {
-    this.ws.call('giveResource', this.myResource).then((result) => {
+    this.ws.call('giveResource', this.resources).then((result) => {
       debug(result);
     }).catch((e) => {
       debug(e);
@@ -62,6 +61,15 @@ class Client {
     } else {
       debug(`[${this.token}] Not enough resources.`);
     }
+  }
+
+  takeResource(quantity) {
+    this.ws.call('takeResource', quantity).then((resources) => {
+      debug(`[${this.token}] I got ${resources} resources.`);
+      this.resources += resources;
+    }).catch((e) => {
+      debug(e);
+    });
   }
 }
 
