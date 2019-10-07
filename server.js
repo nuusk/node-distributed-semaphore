@@ -1,14 +1,22 @@
 require('dotenv').config();
 const WebSocketServer = require('rpc-websockets').Server;
 const debug = require('debug')('server');
+const Semaphore = require('./services/Semaphore');
 
-const { DEBUG_ENABLED } = process.env;
+const { DEBUG_ENABLED, SEMAPHORE_CAPACITY } = process.env;
 
 debug.enabled = DEBUG_ENABLED;
 
 const server = new WebSocketServer({
   port: 8080,
   host: 'localhost',
+});
+
+const semaphoreCapacity = SEMAPHORE_CAPACITY || 20;
+
+debug('Attempting to create a semaphore');
+const semaphore = new Semaphore(semaphoreCapacity).then((message) => {
+  debug(message);
 });
 
 // register an RPC method

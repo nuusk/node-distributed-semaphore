@@ -9,9 +9,13 @@ debug.enabled = DEBUG_ENABLED;
 
 class Semaphore {
   constructor(s) {
-    this.s = s;
-    this.capacity = s;
-    this.intervalSpeed = seconds(3);
+    return new Promise((resolve) => {
+      this.s = s;
+      this.capacity = s;
+      this.intervalSpeed = seconds(3);
+
+      resolve(`Semaphore with capacity of ${this.capacity} created successfully.`);
+    });
   }
 
   v(value) {
