@@ -12,6 +12,7 @@
     "debug": "^4.1.1",
     "dotenv": "^8.1.0",
     "eslint-config-airbnb": "^18.0.1",
+    "prompts": "^2.2.1",
     "rpc-websockets": "^4.6.1",
     "uuid": "^3.3.3"
   },

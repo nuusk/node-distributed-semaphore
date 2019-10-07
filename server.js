@@ -19,4 +19,14 @@ const semaphore = new Semaphore(semaphoreCapacity);
 const server = new WebSocketServer({ port, host });
 debug(`Server started on ${host}:${port}`);
 
+server.register('heartBeat', () => { debug('heartBeated...'); });
 server.register('takeResource', (quantity) => semaphore.p(quantity));
+server.register('giveResource', (quantity) => semaphore.v(quantity));
+server.on('connection', () => {
+  debug('client connected');
+  debug(server.eventList());
+});
+
+server.on('error', (err) => {
+  debug(err);
+});

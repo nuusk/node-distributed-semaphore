@@ -1,6 +1,7 @@
 require('dotenv').config();
 const WebSocket = require('rpc-websockets').Client;
 const debug = require('debug')('client');
+const { seconds } = require('./helpers/time');
 
 const { DEBUG_ENABLED, PORT, HOST } = process.env;
 
@@ -10,14 +11,29 @@ const host = HOST || 'localhost';
 
 const ws = new WebSocket(`ws://${host}:${port}`);
 
-let counter;
+const heartBeat = () => {
+  ws.notify('heartBeat');
 
-ws.on('open', () => {
+  setTimeout(heartBeat, seconds(1));
+};
+
+const main = () => {
   ws.call('takeResource', 2).then((result) => {
     debug(result);
   }).catch((e) => {
     debug(e);
   });
 
-  // ws.close();
-});
+  heartBeat();
+};
+
+const cleanUp = () => {
+  ws.call('giveResource', 2).then((result) => {
+    debug(result);
+  }).catch((e) => {
+    debug(e);
+  });
+};
+
+ws.on('open', main);
+ws.on('close', cleanUp);
