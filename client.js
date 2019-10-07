@@ -17,6 +17,7 @@ const client = new Client();
         { title: 'Take resources', value: 'takeResources' },
         { title: 'Give resources', value: 'giveResources' },
         { title: 'Check resources', value: 'checkResources' },
+        { title: 'Exit program', value: 'exit' },
       ],
     });
 
@@ -42,6 +43,10 @@ const client = new Client();
         break;
       case 'checkResources':
         client.checkResources();
+        break;
+      case 'exit':
+        client.cleanUp();
+        process.exit();
         break;
       default: break;
     }
